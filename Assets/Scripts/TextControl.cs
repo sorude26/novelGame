@@ -19,7 +19,6 @@ public class TextControl : MonoBehaviour
     public int CurrentIndexCount { get; private set; }
     string m_viewText = default;
     bool m_skip = false;
-
     public event Action OnViewLetter;
     public event Action<int> OnViewLineStart;
     public event Action<int> OnViewLineEnd;
@@ -90,7 +89,7 @@ public class TextControl : MonoBehaviour
             yield return null;
         }
     }
-    void Skip()
+    public void Skip()
     {
         m_skip = true;
     }
