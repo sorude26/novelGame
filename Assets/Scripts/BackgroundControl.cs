@@ -13,6 +13,7 @@ public class BackgroundControl : MonoBehaviour
     bool m_fadeChange = false;
     bool m_changeColor = false;
     bool m_skip = false;
+    
     public void Skip()
     {
         if (m_skip)
@@ -44,6 +45,7 @@ public class BackgroundControl : MonoBehaviour
         yield return ChangeColor(time / 2, Color.black);
         ChangeBackground(number);
         yield return ChangeColor(time / 2, Color.white);
+        m_fadeChange = false;
     }
     IEnumerator ChangeColor(float time, Color color)
     {

@@ -8,6 +8,8 @@ public class CharacterControl : MonoBehaviour
     [SerializeField]
     int m_id = default;
     [SerializeField]
+    RectTransform m_rect = default;
+    [SerializeField]
     Image m_characterImage = default;
     [SerializeField]
     Image m_faceImage = default;
@@ -17,7 +19,9 @@ public class CharacterControl : MonoBehaviour
     Animator m_animator = default;
     public int ID { get => m_id; }
     public string Name { get => m_data.Name; }
+    public RectTransform Rect { get => m_rect; }
     Color m_currentColor = Color.white;
+    public bool ActionNow { get; private set; }
     bool m_move = false;
     bool m_changeColor = false;
     bool m_skip = false;
@@ -53,6 +57,7 @@ public class CharacterControl : MonoBehaviour
             return;
         }
         m_changeColor = true;
+        ActionNow = true;
         StartCoroutine(ChangeColor(time, color));
     }
     public void StartMoveStraight(float time, Vector2 start, Vector2 goal)
@@ -62,6 +67,7 @@ public class CharacterControl : MonoBehaviour
             return;
         }
         m_move = true;
+        ActionNow = true;
         StartCoroutine(MoveStraight(time, start, goal));
     }
     public void FadeIn(float time)
@@ -128,5 +134,6 @@ public class CharacterControl : MonoBehaviour
             yield return null;
         }
         m_skip = false;
+        ActionNow = false;
     }
 }

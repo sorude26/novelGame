@@ -11,7 +11,7 @@ public class TextControl : MonoBehaviour
     [SerializeField]
     Text m_text = default;
     [SerializeField]
-    Text m_letter = default;
+    Text m_nameText = default;
     [SerializeField]
     float m_defaultViewSpeed = 0.1f;
     float m_viewSpeed = default;
@@ -33,6 +33,10 @@ public class TextControl : MonoBehaviour
         {
             StartCoroutine(ViewStory());
         }
+    }
+    public void SetName(string name)
+    {
+        m_nameText.text = name;
     }
     public void ChangeSpeed(float speed)
     {
@@ -91,6 +95,9 @@ public class TextControl : MonoBehaviour
     }
     public void Skip()
     {
-        m_skip = true;
+        if (View)
+        {
+            m_skip = true;
+        }
     }
 }
