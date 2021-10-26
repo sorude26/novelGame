@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CharacterControl : MonoBehaviour
+public class CharacterControl : MonoBehaviour, IStoryControl
 {
     [SerializeField]
     int m_id = default;
@@ -21,9 +22,10 @@ public class CharacterControl : MonoBehaviour
     public string Name { get => m_data.Name; }
     public RectTransform Rect { get => m_rect; }
     Color m_currentColor = Color.white;
-    public bool ActionNow { get; private set; }
+    public bool ActionNow { get => m_move || m_changeColor || m_action; }
     bool m_move = false;
     bool m_changeColor = false;
+    bool m_action = false;
     bool m_skip = false;
     public void Skip()
     {
@@ -50,15 +52,24 @@ public class CharacterControl : MonoBehaviour
         }
         m_faceImage.sprite = m_data.FaceSprite[number];
     }
-    public void StartChangeColor(float time,Color color)
+    public void StartChangeColor(float time, Color color)
     {
         if (m_changeColor)
         {
             return;
         }
         m_changeColor = true;
-        ActionNow = true;
         StartCoroutine(ChangeColor(time, color));
+    }
+    public void StartChangeColor(float time, Color color,Action action)
+    {
+        if (m_changeColor)
+        {
+            return;
+        }
+        m_changeColor = true;
+        m_action = true;
+        StartCoroutine(ChangeColor(time, color, action));
     }
     public void StartMoveStraight(float time, Vector2 start, Vector2 goal)
     {
@@ -67,16 +78,35 @@ public class CharacterControl : MonoBehaviour
             return;
         }
         m_move = true;
-        ActionNow = true;
         StartCoroutine(MoveStraight(time, start, goal));
+    }
+    public void StartMoveStraight(float time, Vector2 start, Vector2 goal,Action action)
+    {
+        if (m_move)
+        {
+            return;
+        }
+        m_move = true;
+        m_action = true;
+        StartCoroutine(MoveStraight(time, start, goal, action));
     }
     public void FadeIn(float time)
     {
+        m_currentColor = Color.clear;
         StartChangeColor(time, Color.white);
+    }
+    public void FadeIn(float time,Action action)
+    {
+        m_currentColor = Color.clear;
+        StartChangeColor(time, Color.white, action);
     }
     public void FadeOut(float time)
     {
         StartChangeColor(time, Color.clear);
+    }
+    public void FadeOut(float time,Action action)
+    {
+        StartChangeColor(time, Color.clear, action);
     }
 
     IEnumerator ChangeColor(float time, Color color)
@@ -91,7 +121,7 @@ public class CharacterControl : MonoBehaviour
         while (a < 1)
         {
             a += b * Time.deltaTime;
-            if (a >= 1 && !m_skip)
+            if (a >= 1 || m_skip)
             {
                 a = 1;
             }
@@ -129,11 +159,22 @@ public class CharacterControl : MonoBehaviour
     }
     IEnumerator CheckSkip()
     {
-        while (m_move || m_changeColor)
+        while (m_move || m_changeColor || m_action)
         {
             yield return null;
         }
         m_skip = false;
-        ActionNow = false;
+    }
+    IEnumerator ChangeColor(float time, Color color,Action action)
+    {
+        yield return ChangeColor(time, color);
+        action?.Invoke();
+        m_action = false;
+    }
+    IEnumerator MoveStraight(float time, Vector2 start, Vector2 goal,Action action)
+    {
+        yield return MoveStraight(time, start, goal);
+        action?.Invoke();
+        m_action = false;
     }
 }

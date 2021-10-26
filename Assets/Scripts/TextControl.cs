@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TextControl : MonoBehaviour
+public class TextControl : MonoBehaviour, IStoryControl
 {
     [SerializeField]
     string[] m_allText = default;
+    public int TextCount => m_allText.Length;
     [SerializeField]
     Text m_text = default;
     [SerializeField]
@@ -15,7 +16,9 @@ public class TextControl : MonoBehaviour
     [SerializeField]
     float m_defaultViewSpeed = 0.1f;
     float m_viewSpeed = default;
+    bool IStoryControl.ActionNow { get => m_rine; }
     public bool View { get; private set; }
+    bool m_rine = default;
     public int CurrentIndexCount { get; private set; }
     string m_viewText = default;
     bool m_skip = false;
@@ -23,16 +26,13 @@ public class TextControl : MonoBehaviour
     public event Action<int> OnViewLineStart;
     public event Action<int> OnViewLineEnd;
     public event Action OnTextEnd;
-    public void NextText()
+    public void StartStory()
     {
         if (View)
         {
-            Skip();
+            return;
         }
-        else
-        {
-            StartCoroutine(ViewStory());
-        }
+        StartCoroutine(ViewStory());
     }
     public void SetName(string name)
     {
@@ -49,11 +49,13 @@ public class TextControl : MonoBehaviour
         m_viewSpeed = m_defaultViewSpeed;
         while (CurrentIndexCount < m_allText.Length)
         {
+            m_rine = true;
             m_viewText = "";
             m_text.text = m_viewText;
             OnViewLineStart?.Invoke(CurrentIndexCount);
             yield return ViewText();
             OnViewLineEnd?.Invoke(CurrentIndexCount - 1);
+            m_rine = false;
             yield return WaitInput();
         }
         View = false;
