@@ -5,25 +5,23 @@ using UnityEngine;
 
 public class StoryEventControl
 {
-    private Action[] AllEvent;
-    public StoryEventControl(int eventCount)
+    private List<IEnumerator[]> m_allEvent;
+    public StoryEventControl()
     { 
-        AllEvent = new Action[eventCount];
+        m_allEvent = new List<IEnumerator[]>();
     }
-    public void AddEvent(int eventNum, Action action)
+    public void AddEvent(IEnumerator[] action)
     {
-        if (eventNum < 0 || eventNum >= AllEvent.Length)
-        {
-            return;
-        }
-        AllEvent[eventNum] += action;
+        m_allEvent.Add(action);
     }
-    public void PlayEvent(int eventNum)
+    public IEnumerator PlayEvent(int eventNum)
     {
-        if (eventNum < 0 || eventNum >= AllEvent.Length)
+        if (eventNum >= 0 && eventNum < m_allEvent.Count)
         {
-            return;
+            for (int i = 0; i < m_allEvent[eventNum].Length; i++)
+            {
+                yield return m_allEvent[eventNum][i];
+            }
         }
-        AllEvent[eventNum]?.Invoke();
     }
 }

@@ -81,8 +81,9 @@ public class BackgroundControl : MonoBehaviour, IStoryControl
         }
         m_backgroundImage2.sprite = m_backgroundSprite[number];
     }
-    IEnumerator FadeChangeBackground(float time, int number)
+    public IEnumerator FadeChangeBackground(float time, int number)
     {
+        m_fadeChange = true;
         ChangeBackground2(number);
         yield return ChangeColor(time / 2, Color.black);
         ChangeBackground(number);
@@ -91,6 +92,7 @@ public class BackgroundControl : MonoBehaviour, IStoryControl
     }
     IEnumerator FadeChangeBackground(float time, int number,Action action)
     {
+        m_fadeChange = true;
         ChangeBackground2(number);
         yield return ChangeColor(time / 2, Color.black);
         ChangeBackground(number);
@@ -99,8 +101,9 @@ public class BackgroundControl : MonoBehaviour, IStoryControl
         action?.Invoke();
         m_action = false;
     }
-    IEnumerator CrossFadeChange(float time,int number)
+    public IEnumerator CrossFadeChange(float time,int number)
     {
+        m_fadeChange = true;
         ChangeBackground2(number);
         yield return ChangeColor(time, Color.clear);
         ChangeBackground(number);
@@ -109,6 +112,7 @@ public class BackgroundControl : MonoBehaviour, IStoryControl
     }
     IEnumerator CrossFadeChange(float time, int number,Action action)
     {
+        m_fadeChange = true;
         ChangeBackground2(number);
         yield return ChangeColor(time, Color.clear);
         ChangeBackground(number);
@@ -119,6 +123,7 @@ public class BackgroundControl : MonoBehaviour, IStoryControl
     }
     IEnumerator ChangeColor(float time, Color color)
     {
+        m_changeColor = true;
         float a = 0;
         if (time <= 0)
         {
@@ -126,7 +131,7 @@ public class BackgroundControl : MonoBehaviour, IStoryControl
             time = 1;
         }
         float b = 1 / time;
-        while (a < 1)
+        while (a < 1 && !m_skip)
         {
             a += b * Time.deltaTime;
             if (a >= 1 || m_skip)

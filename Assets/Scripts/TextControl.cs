@@ -16,16 +16,22 @@ public class TextControl : MonoBehaviour, IStoryControl
     [SerializeField]
     float m_defaultViewSpeed = 0.1f;
     float m_viewSpeed = default;
-    bool IStoryControl.ActionNow { get => m_rine; }
-    public bool View { get; private set; }
-    bool m_rine = default;
-    public int CurrentIndexCount { get; private set; }
     string m_viewText = default;
-    bool m_skip = false;
+    bool m_rine = default;
+    bool m_skip = default; 
     public event Action OnViewLetter;
     public event Action<int> OnViewLineStart;
     public event Action<int> OnViewLineEnd;
     public event Action OnTextEnd;
+    StoryEventControl m_event = default;
+    public StoryEventControl EventControl { get => m_event; }
+    public int CurrentIndexCount { get; private set; }
+    bool IStoryControl.ActionNow { get => m_rine; }
+    public bool View { get; private set; }
+    public void StartSet()
+    {
+        m_event = new StoryEventControl();
+    }
     public void StartStory()
     {
         if (View)
@@ -53,15 +59,16 @@ public class TextControl : MonoBehaviour, IStoryControl
             m_viewText = "";
             m_text.text = m_viewText;
             OnViewLineStart?.Invoke(CurrentIndexCount);
-            yield return ViewText();
+            yield return m_event.PlayEvent(CurrentIndexCount);
             OnViewLineEnd?.Invoke(CurrentIndexCount - 1);
             m_rine = false;
+            m_skip = false;
             yield return WaitInput();
         }
         View = false;
         OnTextEnd?.Invoke();
     }
-    IEnumerator ViewText()
+    public IEnumerator ViewText()
     {
         int letterCount = 0;
         while (letterCount < m_allText[CurrentIndexCount].Length && !m_skip)

@@ -52,61 +52,45 @@ public class CharacterControl : MonoBehaviour, IStoryControl
         }
         m_faceImage.sprite = m_data.FaceSprite[number];
     }
-    public void StartChangeColor(float time, Color color)
+    public IEnumerator StartChangeColor(float time, Color color)
     {
-        if (m_changeColor)
-        {
-            return;
-        }
         m_changeColor = true;
-        StartCoroutine(ChangeColor(time, color));
+        yield return ChangeColor(time, color);
     }
-    public void StartChangeColor(float time, Color color,Action action)
+    public IEnumerator StartChangeColor(float time, Color color,Action action)
     {
-        if (m_changeColor)
-        {
-            return;
-        }
         m_changeColor = true;
         m_action = true;
-        StartCoroutine(ChangeColor(time, color, action));
+        yield return ChangeColor(time, color, action);
     }
-    public void StartMoveStraight(float time, Vector2 start, Vector2 goal)
+    public IEnumerator StartMoveStraight(float time, Vector2 start, Vector2 goal)
     {
-        if (m_move)
-        {
-            return;
-        }
         m_move = true;
-        StartCoroutine(MoveStraight(time, start, goal));
+        yield return MoveStraight(time, start, goal);
     }
-    public void StartMoveStraight(float time, Vector2 start, Vector2 goal,Action action)
+    public IEnumerator StartMoveStraight(float time, Vector2 start, Vector2 goal,Action action)
     {
-        if (m_move)
-        {
-            return;
-        }
         m_move = true;
         m_action = true;
-        StartCoroutine(MoveStraight(time, start, goal, action));
+        yield return MoveStraight(time, start, goal, action);
     }
-    public void FadeIn(float time)
+    public IEnumerator FadeIn(float time)
     {
         m_currentColor = Color.clear;
-        StartChangeColor(time, Color.white);
+        yield return StartChangeColor(time, Color.white);
     }
-    public void FadeIn(float time,Action action)
+    public IEnumerator FadeIn(float time,Action action)
     {
         m_currentColor = Color.clear;
-        StartChangeColor(time, Color.white, action);
+        yield return StartChangeColor(time, Color.white, action);
     }
-    public void FadeOut(float time)
+    public IEnumerator FadeOut(float time)
     {
-        StartChangeColor(time, Color.clear);
+        yield return StartChangeColor(time, Color.clear);
     }
-    public void FadeOut(float time,Action action)
+    public IEnumerator FadeOut(float time,Action action)
     {
-        StartChangeColor(time, Color.clear, action);
+        yield return StartChangeColor(time, Color.clear, action);
     }
 
     IEnumerator ChangeColor(float time, Color color)

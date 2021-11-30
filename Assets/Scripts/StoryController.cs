@@ -14,24 +14,27 @@ public class StoryController : MonoBehaviour
     [SerializeField]
     AllCharacterData m_characterData = default;
     IStoryControl[] m_allControl = default;
-    StoryEventControl m_event = default;
     bool m_actionNow = false;
     bool m_check = false;
     private void Start()
     {
         IStoryControl[] allControl = { m_textControl, m_actorControl, m_background };
         m_allControl = allControl;
-        m_event = new StoryEventControl(m_textControl.TextCount);
-        m_event.AddEvent(0, Test1);
-        m_event.AddEvent(1, Test2);
-        m_event.AddEvent(2, Test3);
-        m_event.AddEvent(3, Test4);
-        m_event.AddEvent(4, Test5);
-        m_event.AddEvent(5, Test6);
+        m_textControl.StartSet();
         m_actorControl.AddActor(m_characterData.GetCharacter(0), 1);
         m_actorControl.AddActor(m_characterData.GetCharacter(1), 6);
-        m_actorControl.AddActor(m_characterData.GetCharacter(1), 4);
-        m_textControl.OnViewLineStart += m_event.PlayEvent;
+        IEnumerator[] events = { WaitAllAsync( new IEnumerator[]{ m_textControl.ViewText(), m_background.CrossFadeChange(5f, 2) },new Action[] { () => { } }) };
+        m_textControl.EventControl.AddEvent(events);
+        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
+        m_textControl.EventControl.AddEvent(events);
+        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 0) }, new Action[] { () => { } }) };
+        m_textControl.EventControl.AddEvent(events);
+        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 2) }, new Action[] { () => { } }) };
+        m_textControl.EventControl.AddEvent(events);
+        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
+        m_textControl.EventControl.AddEvent(events);
+        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
+        m_textControl.EventControl.AddEvent(events);
         m_textControl.OnTextEnd += m_textControl.StartStory;
         m_textControl.StartStory();
         m_actionNow = true;
@@ -71,45 +74,45 @@ public class StoryController : MonoBehaviour
         }
         return false;
     }
-    void Test1()
+    IEnumerator WaitAllAsync(IEnumerator[] asyncs, Action[] actions)
     {
-        m_actorControl.SelectActor(0).FadeIn(2);
-        m_actorControl.SelectActor(1).FadeIn(2,() =>
-        m_background.StartCrossFadeBackground(1, 4));
+        var canceler = new Canceler(asyncs.Length);
+        for (int i = 0; i < asyncs.Length; i++)
+        {
+            StartCoroutine(Await(asyncs[i],canceler.Cancel));
+        }
+        while (!canceler.IsCanceld)
+        {     
+            yield return null;
+        }
+        foreach (var action in actions)
+        {
+            action?.Invoke();
+        }
     }
-    void Test2()
+    IEnumerator Await(IEnumerator async, Action action)
     {
-        m_background.StartCrossFadeBackground(3, 2);
-        m_actorControl.SelectActor(0).FadeIn(2, () =>
-         {
-             m_actorControl.SelectActor(0).StartChangeColor(0, Color.clear);
-             m_actorControl.SelectActor(1).FadeIn(2, () =>
-             {
-                 m_background.StartCrossFadeBackground(2, 0);
-                 m_actorControl.SelectActor(0).FadeIn(2);
-             });
-         });
+        yield return async;
+        action?.Invoke();
     }
-    void Test3()
+    IEnumerator WaitAnyAsync(IEnumerator[] e, Action[] actions)
     {
-        m_background.StartChangeBackground(1, 1);
-        m_actorControl.SelectActor(1).StartMoveStraight(4, m_actorControl.GetPos(6), m_actorControl.GetPos(3));
+        bool async = true;
+        while (async)
+        {
+            for (int i = 0; i < e.Length; i++)
+            {
+                if (!e[i].MoveNext())
+                {
+                    async = false;
+                }
+            }
+            yield return null;
+        }
+        foreach (var action in actions)
+        {
+            action?.Invoke();
+        }
     }
-    void Test4()
-    {
-        m_background.StartCrossFadeBackground(3, 3);
-        m_actorControl.SelectActor(0).StartChangeColor(3, Color.black);
-    }
-    void Test5()
-    {
-        m_background.StartChangeBackground(1, 0,() =>
-        m_actorControl.SelectActor(0).StartChangeColor(1, Color.white,() =>
-        m_actorControl.SelectActor(1).StartChangeColor(3, Color.black,() => 
-        m_actorControl.SelectActor(1).StartMoveStraight(0.5f, m_actorControl.GetPos(3), m_actorControl.GetPos(6)))));
-    }
-    void Test6()
-    {
-        m_actorControl.SelectActor(0).FadeOut(3);
-        m_actorControl.SelectActor(1).FadeOut(1);
-    }
+   
 }
