@@ -27,12 +27,14 @@ public class StoryController : MonoBehaviour
         m_textControl.EventControl.AddEvent(events);
         events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
         m_textControl.EventControl.AddEvent(events);
-        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 0) }, new Action[] { () => { } }) };
+        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_background.CrossFadeChange(5f, 0) }, new Action[] { () => { } }) };
         m_textControl.EventControl.AddEvent(events);
         events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 2) }, new Action[] { () => { } }) };
         m_textControl.EventControl.AddEvent(events);
         events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
         m_textControl.EventControl.AddEvent(events);
+        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
+        m_textControl.EventControl.AddEvent(events); 
         events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
         m_textControl.EventControl.AddEvent(events);
         m_textControl.OnTextEnd += m_textControl.StartStory;

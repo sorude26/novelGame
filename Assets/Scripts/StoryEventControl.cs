@@ -6,6 +6,7 @@ using UnityEngine;
 public class StoryEventControl
 {
     private List<IEnumerator[]> m_allEvent;
+    public int AllEventCount { get => m_allEvent.Count; }
     public StoryEventControl()
     { 
         m_allEvent = new List<IEnumerator[]>();
