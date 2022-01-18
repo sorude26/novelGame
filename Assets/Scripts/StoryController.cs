@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class StoryController : MonoBehaviour
     IStoryControl[] m_allControl = default;
     bool m_actionNow = false;
     bool m_check = false;
+    Entity_Sheet1 es = default;
     private void Start()
     {
         IStoryControl[] allControl = { m_textControl, m_actorControl, m_background };
@@ -40,6 +42,11 @@ public class StoryController : MonoBehaviour
         m_textControl.OnTextEnd += m_textControl.StartStory;
         m_textControl.StartStory();
         m_actionNow = true;
+        es = Resources.Load("storyText") as Entity_Sheet1;
+        for (int i = 0; i < es.sheets[0].list.Count; i++)
+        {
+            Debug.Log(es.sheets[0].list[i].code);
+        }
     }
 
     public void OnClickNext()
@@ -97,18 +104,15 @@ public class StoryController : MonoBehaviour
         yield return async;
         action?.Invoke();
     }
-    IEnumerator WaitAnyAsync(IEnumerator[] e, Action[] actions)
+    IEnumerator WaitAnyAsync(IEnumerator[] asyncs, Action[] actions)
     {
-        bool async = true;
-        while (async)
+        var canceler = new Canceler(0);
+        for (int i = 0; i < asyncs.Length; i++)
         {
-            for (int i = 0; i < e.Length; i++)
-            {
-                if (!e[i].MoveNext())
-                {
-                    async = false;
-                }
-            }
+            StartCoroutine(Await(asyncs[i], canceler.Cancel));
+        }
+        while (!canceler.IsCanceld)
+        {
             yield return null;
         }
         foreach (var action in actions)

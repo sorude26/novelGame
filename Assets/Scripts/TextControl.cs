@@ -80,7 +80,7 @@ public class TextControl : MonoBehaviour, IStoryControl
             m_viewText += m_allText[m_currentIndexCount][letterCount];
             m_text.text = m_viewText;
             OnViewLetter?.Invoke();
-            yield return WaitTime(m_viewSpeed);
+            yield return WaitTime(m_viewSpeed / m_allText[m_currentIndexCount].Length);
             letterCount++;
         }
         m_viewText = m_allText[m_currentIndexCount];
