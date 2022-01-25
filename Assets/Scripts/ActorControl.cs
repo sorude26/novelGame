@@ -56,7 +56,10 @@ public class ActorControl : MonoBehaviour, IStoryControl
         }
         return m_actorList[number];
     }
-
+    public IEnumerator SelectActorMove(int number,int target, float time)
+    {
+        return SelectActor(number).StartMoveStraight(time, SelectActor(number).transform.position, m_actorPos[target].position);
+    }
     public void Skip()
     {
         foreach (var actor in m_actorList)

@@ -15,30 +15,30 @@ MonoBehaviour:
   sheets:
   - name: Sheet1
     list:
-    - id: 1
+    - id: 0
       type: 1
-      code: good
-    - id: 2
+      code: all/text/actor%fadeIn#0##2/actor%fadeIn#1##2/back%fade#3#4/actor%move#0#1#5/actor%move#1#6#5
+    - id: 1
       type: 2
-      code: bad
-    - id: 3
+      code: all/actor%fadeOut#0##1/back%cross#0#2
+    - id: 2
       type: 3
-      code: good
+      code: all/text/back%cross#1#4/actor%move#1#7#5
+    - id: 3
+      type: 1
+      code: all/text/actor%fadeIn#0##3/actor%move#0#5#5
     - id: 4
       type: 1
-      code: good
+      code: all/actor%fadeOut#1##4/back%fade#2#4/actor%move#0#1#5/actor%move#1#6#5
     - id: 5
-      type: 1
-      code: bad
-    - id: 6
       type: 4
-      code: good
+      code: all/text/back%cross#1#4/actor%move#1#2#2
+    - id: 6
+      type: 2
+      code: all/actor%fadeIn#1##4/back%cross#3#4/actor%move#0#8#3
     - id: 7
       type: 2
-      code: good
+      code: all/back%cross#2#2/actor%move#0#6#0.5/actor%move#1#1#0.5
     - id: 8
-      type: 2
-      code: good
-    - id: 9
       type: 4
-      code: good
+      code: all/text/actor%move#0#9#5/actor%move#1#8#5

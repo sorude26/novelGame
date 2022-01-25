@@ -170,6 +170,7 @@ GameObject:
   m_Component:
   - component: {fileID: 202189974}
   - component: {fileID: 202189975}
+  - component: {fileID: 202189976}
   m_Layer: 5
   m_Name: StoryManager
   m_TagString: Untagged
@@ -208,10 +209,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7a8fc1ed1959764d930cf70c9cd253d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_textControl: {fileID: 725777129}
-  m_actorControl: {fileID: 466485332}
-  m_background: {fileID: 1932832941}
-  m_characterData: {fileID: 11400000, guid: 5f14fc21b7b942d4ea6c4f6c0967147b, type: 2}
+  _textControl: {fileID: 725777129}
+  _actorControl: {fileID: 466485332}
+  _background: {fileID: 1932832941}
+  _dataLoadController: {fileID: 202189976}
+  _characterData: {fileID: 11400000, guid: 5f14fc21b7b942d4ea6c4f6c0967147b, type: 2}
+--- !u!114 &202189976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202189973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3e7131b5aeea304dbb56ee1992dbac0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &401628184
 GameObject:
   m_ObjectHideFlags: 0
@@ -649,6 +663,7 @@ MonoBehaviour:
   m_text: {fileID: 1592954292}
   m_nameText: {fileID: 2129540608}
   m_defaultViewSpeed: 5
+  m_event: {fileID: 202189976}
 --- !u!1 &741152991
 GameObject:
   m_ObjectHideFlags: 0

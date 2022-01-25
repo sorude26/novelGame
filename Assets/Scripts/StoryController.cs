@@ -7,56 +7,38 @@ using UnityEngine;
 public class StoryController : MonoBehaviour
 {
     [SerializeField]
-    TextControl m_textControl = default;
+    TextControl _textControl = default;
     [SerializeField]
-    ActorControl m_actorControl = default;
+    ActorControl _actorControl = default;
     [SerializeField]
-    BackgroundControl m_background = default;
+    BackgroundControl _background = default;
     [SerializeField]
-    AllCharacterData m_characterData = default;
-    IStoryControl[] m_allControl = default;
-    bool m_actionNow = false;
-    bool m_check = false;
-    Entity_Sheet1 es = default;
+    DataLoadController _dataLoadController = default;
+    [SerializeField]
+    AllCharacterData _characterData = default;
+    IStoryControl[] _allControl = default;
+    bool _actionNow = false;
+    bool _check = false;
     private void Start()
     {
-        IStoryControl[] allControl = { m_textControl, m_actorControl, m_background };
-        m_allControl = allControl;
-        m_textControl.StartSet();
-        m_actorControl.AddActor(m_characterData.GetCharacter(0), 1);
-        m_actorControl.AddActor(m_characterData.GetCharacter(1), 6);
-        IEnumerator[] events = { WaitAllAsync( new IEnumerator[]{ m_textControl.ViewText(), m_background.CrossFadeChange(5f, 2) },new Action[] { () => { } }) };
-        m_textControl.EventControl.AddEvent(events);
-        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
-        m_textControl.EventControl.AddEvent(events);
-        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_background.CrossFadeChange(5f, 0) }, new Action[] { () => { } }) };
-        m_textControl.EventControl.AddEvent(events);
-        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 2) }, new Action[] { () => { } }) };
-        m_textControl.EventControl.AddEvent(events);
-        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
-        m_textControl.EventControl.AddEvent(events);
-        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
-        m_textControl.EventControl.AddEvent(events); 
-        events = new IEnumerator[] { WaitAllAsync(new IEnumerator[] { m_textControl.ViewText(), m_background.CrossFadeChange(5f, 1) }, new Action[] { () => { } }) };
-        m_textControl.EventControl.AddEvent(events);
-        m_textControl.OnTextEnd += m_textControl.StartStory;
-        m_textControl.StartStory();
-        m_actionNow = true;
-        es = Resources.Load("storyText") as Entity_Sheet1;
-        for (int i = 0; i < es.sheets[0].list.Count; i++)
-        {
-            Debug.Log(es.sheets[0].list[i].code);
-        }
+        IStoryControl[] allControl = { _textControl, _actorControl, _background };
+        _allControl = allControl;
+        _actorControl.AddActor(_characterData.GetCharacter(0), 9);
+        _actorControl.AddActor(_characterData.GetCharacter(1), 8);
+        _dataLoadController.SetControl(_textControl, _actorControl, _background);
+        _textControl.OnTextEnd += _textControl.StartStory;
+        _textControl.StartStory();
+        _actionNow = true;
     }
 
     public void OnClickNext()
     {
-        if (!m_actionNow || m_check)
+        if (!_actionNow || _check)
         {
             return;
         }
-        m_check = true;
-        foreach (var control in m_allControl)
+        _check = true;
+        foreach (var control in _allControl)
         {
             control.Skip();
         }
@@ -68,12 +50,12 @@ public class StoryController : MonoBehaviour
         {
             yield return null;
         }
-        m_check = false;
-        m_actionNow = true;
+        _check = false;
+        _actionNow = true;
     }
     bool CheckAction()
     {
-        foreach (var control in m_allControl)
+        foreach (var control in _allControl)
         {
             if (control.ActionNow)
             {

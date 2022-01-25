@@ -14,13 +14,14 @@ public class TextControl : MonoBehaviour, IStoryControl
     Text m_nameText = default;
     [SerializeField]
     float m_defaultViewSpeed = 0.1f;
+    [SerializeField]
+    DataLoadController m_event = default;
 
     private int m_currentIndexCount = 0;
     float m_viewSpeed = default;
     string m_viewText = default;
     bool m_rine = default;
     bool m_skip = default;
-    StoryEventControl m_event = default;
     public event Action OnViewLetter;
     public event Action<int> OnViewLineStart;
     public event Action<int> OnViewLineEnd;
@@ -28,11 +29,10 @@ public class TextControl : MonoBehaviour, IStoryControl
     public int EventCount { get; private set; }
     public int TextCount { get => m_allText.Length; }
     public bool View { get; private set; }
-    public StoryEventControl EventControl { get => m_event; }
     bool IStoryControl.ActionNow { get => m_rine; }
     public void StartSet()
     {
-        m_event = new StoryEventControl();
+        
     }
     public void StartStory()
     {
@@ -56,13 +56,12 @@ public class TextControl : MonoBehaviour, IStoryControl
         EventCount = 0;
         m_currentIndexCount = 0;
         m_viewSpeed = m_defaultViewSpeed;
-        while (EventCount < m_event.AllEventCount)
+        while (EventCount < m_event.StoryCount)
         {
-            m_rine = true;
             m_viewText = "";
             m_text.text = m_viewText;
             OnViewLineStart?.Invoke(EventCount);
-            yield return m_event.PlayEvent(EventCount);
+            yield return m_event.GetEvent(EventCount);
             OnViewLineEnd?.Invoke(EventCount);
             EventCount++;
             m_rine = false;
@@ -72,8 +71,9 @@ public class TextControl : MonoBehaviour, IStoryControl
         View = false;
         OnTextEnd?.Invoke();
     }
-    public IEnumerator ViewText()
+    public IEnumerator ViewText(IEnumerator textEnd = null)
     {
+        m_rine = true;
         int letterCount = 0;
         while (letterCount < m_allText[m_currentIndexCount].Length && !m_skip)
         {
@@ -85,13 +85,14 @@ public class TextControl : MonoBehaviour, IStoryControl
         }
         m_viewText = m_allText[m_currentIndexCount];
         m_text.text = m_viewText;
+        yield return textEnd;
         m_currentIndexCount++;
         OnViewLetter = null;
         m_skip = false;
     }
     IEnumerator WaitInput()
     {
-        while (!m_skip)
+        while (!m_skip )
         {
             yield return null;
         }
