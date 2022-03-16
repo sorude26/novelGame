@@ -129,7 +129,7 @@ public class DataLoadController : MonoBehaviour
         switch (type)
         {
             case "text":
-                return _texts.ViewText();
+                return _texts.ViewText(asyncCode);
             case "actor":
                 return GetAcotorAsync(asyncCode);
             case "back":

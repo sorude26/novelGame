@@ -90,6 +90,25 @@ public class TextControl : MonoBehaviour, IStoryControl
         OnViewLetter = null;
         m_skip = false;
     }
+    public IEnumerator ViewText(string text,IEnumerator textEnd = null)
+    {
+        m_rine = true;
+        int letterCount = 0;
+        while (letterCount < text.Length && !m_skip)
+        {
+            m_viewText += text[letterCount];
+            m_text.text = m_viewText;
+            OnViewLetter?.Invoke();
+            yield return WaitTime(m_viewSpeed);
+            letterCount++;
+        }
+        m_viewText = text;
+        m_text.text = m_viewText;
+        yield return textEnd;
+        m_currentIndexCount++;
+        OnViewLetter = null;
+        m_skip = false;
+    }
     IEnumerator WaitInput()
     {
         while (!m_skip )
